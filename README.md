@@ -42,38 +42,44 @@ Now whenever you call `Debug.Log()` you will see the message appear as text in t
 The biggest challenge we face to getting our controllers working is poor documentation. In the case of the controller suggested for this class we will need to probe Unity's input system to get a correct mapping of the buttons. Make sure your controller is connected to the phone and that Unity is set up to deploy to your phone. Next, in any script (I used the LogMonitor), create an Update function that we can log messages from.
 
 ### Unity's Input System
-Unity handles input through a global input manager that allows us to get the state of pre-defined input fields. Previously we used this to get the state of the mouse button with `Input.GetMouseButtonDown(0)`, which returned true if the left mouse button was pressed only on the frame it was pressed. This tool also allows us to get float values, each are referred to as an *Axis* and given a name by the editor. We can determine the what Axes are available to us by opening the project settings `Edit -> Project Settings -> Input`. Click on the `Fire1` axis and note it's properties.
-Horizontal
-Vertical
-Fire1
+Unity handles input through a global input manager that allows us to get the state of pre-defined input fields. Previously we used this to get the state of the mouse button with `Input.GetMouseButtonDown(0)`, which returned true if the left mouse button was pressed only on the frame it was pressed. This tool also allows us to get float values, each are referred to as an *Axis* and given a name by the editor. We can determine the what Axes are available to us by opening the project settings `Edit -> Project Settings -> Input`. Click on the `Fire1` axis and note it's properties, this is where the Input is connected into the Unity input system and given an alias. You can have multiple input's map to the same axis, which is what we will be taking advantage of today.
+
+### Finding Your Controller
+If your controller is already connected to your phone we should be able to get it's values in Unity. First if there is a "game" setting on the controller make sure that mode is set, on my controller it's a little switch on the left side. Now let's probe around for some values. In the Update function add the following code
+```
+Debug.Log(Input.GetAxis("Horizontal"));
+```
+This will take whatever value the Horizontal axis has at the current frame and print it to the logs. Now upload to your phone and see if it works when you move the joystick. When I move mine, I get a value between -0.8 and 1. Try some other axis names and make note of how they behave. If they only return values 0 and 1 then they are a button, otherwise they are an axis that returns float values. Some important ones you should look for and find on your controller are: Horizontal, Vertical, Fire1, and Jump.
+
 
 ## Joystick Movement and Look Teleportation
 At this point let's make VR enabled again by editing the player settings like you did for assignment 2. Also add a couple of elements to the scene to use as landmarks so you know you are moving, and a Plane object named floor that creates a ground plane along the bottom of the scene.
 
 ### Joystick
-Your controller should have a joystick or a d-pad, create a new script for this functionality name `CameraMovement` and attach it to *MainCamera*. Using the Axis names you discovered before add and subtract from the camera's x and z position based on the state of the joystick.
+Your controller should have a joystick or a d-pad, create a new script for this functionality name `CameraMovement` and attach it to *MainCamera*. Using the Axis names you discovered (probably "Horizontal" and "Vertical") before add and subtract from the camera's x and z position based on the state of the joystick. If you just naively add or subtract from the x and z position this won't work, you'll have to use `transform.right` and `transform.forward` to get relative vectors to move along.
 
-### Teleport
-Most controllers have a trigger, let's map that to a teleport function. First, take the plane we had before and add it to a new layer in the 8th layer slot like we did in assignment 2 called *Environment*. Modify the camera movement script to have this chunck of code in the update.
+In VR you will encounter an issue where you cannot directly set the transform of the camera, this issue can be avoided by a little trick with object nesting. Create an empty game object in the Hierarchy and name it *CameraParent* and drag your *MainCamera* on to it. Then in the `CameraMovement` script add a new class variable `public GameObject parent;` and set it in the editor by dragging the CameraParent from the Hierarchy onto that field in the inspector when it appears. Now try this as your joystick movement code for left and right.
 ```
-if (Input.GetMouseButtonDown(0)) {
-    // The Unity raycast hit object, which will store the output of our raycast
-    RaycastHit hit;
-    // Does the ray intersect any objects excluding the player layer
-    // Parameters: position to start the ray, direction to project the ray, output for raycast, limit of ray length, and layer mask
-    if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, targetLayer)) {
-        // The object we hit will be in the collider property of our hit object.
-        // We can destroy an object or component by using Unity's Destroy function
-        Destroy(hit.collider.gameObject);
-    }
+// When we have a horizontal value
+if (Input.GetAxis("Horizontal") != 0) {
+    // Move the attached parent based on the right vector of this object multiplied by the horizontal axis value
+    parent.transform.position += (transform.right) * Input.GetAxis("Horizontal");
 }
 ```
+This may move a little quick so try scaling it down by multiplying the axis value by 0.5 or whatever feels right to you.
 
+### Teleport
+Most controllers have a trigger, let's map that to a teleport function. First, take the plane we had before and add it to a new layer in the 8th layer slot like we did in assignment 2 called *Environment*. Modify the camera movement script to the same raycasting code we used in assignment 2 to delete targets, then remove the line that deletes the object hit by the raycast. Replace `Input.GetMouseButtonDown(0)` in the if statement with `Input.GetButtonDown("Fire1")`, "fire1" was the name of the input for my trigger, use whichever Axis mapped to yours in your code.
+
+Then were the destroy function used to be add the following.
+```
+parent.transform.position = new Vector3(hit.point.x, 0, hit.point.z);
+```
+This takes the current transform of the the camera and set's it's position to have the raycast hit point's x and z while maintaining the same y value.
 
 ## Assignment Turn In
 For full credit you must complete at least one of the bonus goals below. Once complete, zip up your code and submit it on canvas. In addition demonstrate the functioning app before the deadline to the instructor.
 
 ## Bonus
-- Add a preview of where the user will teleport. Make it something that stands out and is easy to see.
-- Discover another button on the controller and create a script that places an object where you look when you press a button.
-- 
+- Change the teleport code so that the player moves when they release the button and add a preview of where the user will teleport. Make the preview something that stands out and is easy to see.
+- Discover another button on the controller and create a that allows you to grab and move objects in the scene.
