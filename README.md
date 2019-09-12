@@ -81,5 +81,5 @@ This takes the current transform of the the camera and set's it's position to ha
 For full credit you must complete at least one of the bonus goals below. Once complete, zip up your code and submit it on canvas. In addition demonstrate the functioning app before the deadline to the instructor.
 
 ## Bonus
-- Change the teleport code so that the player moves when they release the button and add a preview of where the user will teleport. Make the preview something that stands out and is easy to see.
-- Discover another button on the controller and create a that allows you to grab and move objects in the scene.
+- Change the teleport code so that the player moves when they release the button and add a preview of where the user will teleport. Make the preview something that stands out and is easy to see. **1.5pts**
+- Discover another button on the controller and create a that allows you to grab and move objects in the scene. **1.5pts**
