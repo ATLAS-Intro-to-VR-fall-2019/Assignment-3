@@ -39,12 +39,41 @@ public void LogMessage(string message, string stackTrace, LogType type) {
 Now whenever you call `Debug.Log()` you will see the message appear as text in this text object.
 
 ## Controller Detective Work
-The biggest challenge we face to getting our controllers working is poor documentation. In the case of the controller suggested for this class we will need to probe Unity's input system to get a correct mapping of the buttons.
+The biggest challenge we face to getting our controllers working is poor documentation. In the case of the controller suggested for this class we will need to probe Unity's input system to get a correct mapping of the buttons. Make sure your controller is connected to the phone and that Unity is set up to deploy to your phone. Next, in any script (I used the LogMonitor), create an Update function that we can log messages from.
+
+### Unity's Input System
+Unity handles input through a global input manager that allows us to get the state of pre-defined input fields. Previously we used this to get the state of the mouse button with `Input.GetMouseButtonDown(0)`, which returned true if the left mouse button was pressed only on the frame it was pressed. This tool also allows us to get float values, each are referred to as an *Axis* and given a name by the editor. We can determine the what Axes are available to us by opening the project settings `Edit -> Project Settings -> Input`. Click on the `Fire1` axis and note it's properties.
+Horizontal
+Vertical
+Fire1
 
 ## Joystick Movement and Look Teleportation
 At this point let's make VR enabled again by editing the player settings like you did for assignment 2. Also add a couple of elements to the scene to use as landmarks so you know you are moving, and a Plane object named floor that creates a ground plane along the bottom of the scene.
 
+### Joystick
+Your controller should have a joystick or a d-pad, create a new script for this functionality name `CameraMovement` and attach it to *MainCamera*. Using the Axis names you discovered before add and subtract from the camera's x and z position based on the state of the joystick.
+
+### Teleport
+Most controllers have a trigger, let's map that to a teleport function. First, take the plane we had before and add it to a new layer in the 8th layer slot like we did in assignment 2 called *Environment*. Modify the camera movement script to have this chunck of code in the update.
+```
+if (Input.GetMouseButtonDown(0)) {
+    // The Unity raycast hit object, which will store the output of our raycast
+    RaycastHit hit;
+    // Does the ray intersect any objects excluding the player layer
+    // Parameters: position to start the ray, direction to project the ray, output for raycast, limit of ray length, and layer mask
+    if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, targetLayer)) {
+        // The object we hit will be in the collider property of our hit object.
+        // We can destroy an object or component by using Unity's Destroy function
+        Destroy(hit.collider.gameObject);
+    }
+}
+```
+
+
+## Assignment Turn In
+For full credit you must complete at least one of the bonus goals below. Once complete, zip up your code and submit it on canvas. In addition demonstrate the functioning app before the deadline to the instructor.
 
 ## Bonus
 - Add a preview of where the user will teleport. Make it something that stands out and is easy to see.
+- Discover another button on the controller and create a script that places an object where you look when you press a button.
 - 
