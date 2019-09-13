@@ -71,7 +71,7 @@ This may move a little quick so try scaling it down by multiplying the axis valu
 ### Teleport
 Most controllers have a trigger, let's map that to a teleport function. First, take the plane we had before and add it to a new layer in the 8th layer slot like we did in assignment 2 called *Environment*. Modify the camera movement script to the same raycasting code we used in assignment 2 to delete targets, then remove the line that deletes the object hit by the raycast. Replace `Input.GetMouseButtonDown(0)` in the if statement with `Input.GetButtonDown("Fire1")`, "fire1" was the name of the input for my trigger, use whichever Axis mapped to yours in your code.
 
-Then were the destroy function used to be add the following.
+Then where the destroy function used to be add the following.
 ```
 parent.transform.position = new Vector3(hit.point.x, 0, hit.point.z);
 ```
