@@ -66,7 +66,7 @@ if (Input.GetAxis("Horizontal") != 0) {
     parent.transform.position += (transform.right) * Input.GetAxis("Horizontal");
 }
 ```
-This may move a little quick so try scaling it down by multiplying the axis value by 0.5 or whatever feels right to you.
+This may move a little quick so try scaling it down by multiplying the axis value by 0.5 or whatever feels right to you. Once you have it moving nicely, do the same thing for moving forward and backward using `transform.forward` and the "Vertical" axis.
 
 ### Teleport
 Most controllers have a trigger, let's map that to a teleport function. First, take the plane we had before and create a layer for it called *Environment* in the 8th layer slot, this is similar to how we had a targets layer in assignment two. Modify the camera movement script to use same raycasting code we used in assignment 2 to delete targets, then remove the line that destroies the object hit by the raycast. Replace `Input.GetMouseButtonDown(0)` in the if statement with `Input.GetButtonDown("Fire1")`, "fire1" was the name of the input for my trigger, use whichever Axis mapped to yours in your code.
