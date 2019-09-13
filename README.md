@@ -75,7 +75,7 @@ Then where the destroy function used to be add the following.
 ```
 parent.transform.position = new Vector3(hit.point.x, 0, hit.point.z);
 ```
-This takes the current transform of the the camera and set's it's position to have the raycast hit point's x and z while maintaining the same y value.
+This takes the current transform of the the camera and set's it's position to have the raycast hit point's x and z while maintaining the same y value when you click the trigger while looking at some spot on the ground.
 
 ## Assignment Turn In
 For full credit you must complete at least one of the bonus goals below. Once complete, zip up your code and submit it on canvas. In addition demonstrate the functioning app before the deadline to the instructor.
